@@ -52,7 +52,6 @@ def login():
     rv = s.get(URL + '/uas/login?trk=guest_homepage-basic_nav-header-signin')
     p = BeautifulSoup(rv.content, "html.parser")
 
-
     ac = p.find(attrs={'name' : 'ac'})['value']
     parentPageKey = p.find(attrs={'name' : 'parentPageKey'})['value']
     pageInstance = "urn:li:page:d_checkpoint_lg_consumerLogin;"
@@ -63,7 +62,6 @@ def login():
     apfc = p.find(attrs={'name' : 'apfc'})['value']
     dval = p.find(attrs={'name' : '_d'})['value']
     showGoogleOneTapLogin = p.find(attrs={'name' : 'showGoogleOneTapLogin'})['value']
-
 
     csrf = p.find(attrs={'name' : 'loginCsrfParam'})['value']
     csrf_token = p.find(attrs={'name':'csrfToken'})['value']
@@ -84,7 +82,6 @@ def login():
     try:
         #print(s.cookies)
         cookie = getCookies(s.cookies, ".www.linkedin.com")
-        
     except:
         print("[!] Cannot login")
         sys.exit(0)
@@ -326,7 +323,7 @@ def authenticate():
     		sys.exit("[!] Unable to login to LinkedIn.com")
     	print("[*] Obtained new session")
     	cookies = dict(li_at=session)
-    except Exception:
+    except Exception as e:
         sys.exit("[!] Could not authenticate to linkedin. %s" % e)
     return cookies
 
@@ -407,8 +404,11 @@ if __name__ == '__main__':
             if "status" in content:
                 print("[!] Rate limited by Hunter IO Key")
                 continue
-            prefix = content['data']['pattern']
-            print("[!] %s" % prefix)
+            if "data" in content:
+                pritn(content)
+                prefix = content['data']['pattern']
+                print("[!] %s" % prefix)
+                continue
             if prefix:
                 prefix = prefix.replace("{","").replace("}", "")
                 if prefix == "full" or prefix == "firstlast" or prefix == "firstmlast" or prefix == "flast" or prefix == "firstl" or prefix =="first" or prefix == "first.last" or prefix == "fmlast" or prefix == "lastfirst":
